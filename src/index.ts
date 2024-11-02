@@ -1,12 +1,12 @@
-import { logger } from "@vendetta";
-import Settings from "./Settings";
+import { logger } from '@vendetta';
+import { Settings } from './settings';
 
 export default {
-    onLoad: () => {
-        logger.log("Hello world!");
-    },
-    onUnload: () => {
-        logger.log("Goodbye, world.");
-    },
-    settings: Settings,
-}
+  onLoad: () => {
+    logger.log('Hello world!');
+  },
+  onUnload: () => {
+    logger.log('Goodbye, world.');
+  },
+  settings: Settings,
+};
