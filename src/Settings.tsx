@@ -1,8 +1,17 @@
-import { Forms } from "@vendetta/ui/components";
-const { FormText } = Forms;
+import { Forms, General, Search } from "@vendetta/ui/components";
+const { FormText, FormSection } = Forms;
+const { Button } = General;
 
 export default () => (
-    <FormText>
-        Hello, world!
-    </FormText>
+    <>
+        <FormSection title="Username Colors">
+            <FormText>
+                Hello, world!
+            </FormText>
+            <Button>
+                Hello, world!
+            </Button>
+            <Search />
+        </FormSection >
+    </>
 )
