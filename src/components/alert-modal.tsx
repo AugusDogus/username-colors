@@ -1,6 +1,9 @@
-import { findByProps } from '@vendetta/metro';
-import { Button, Forms } from "@vendetta/ui/components";
-import { ComponentProps, ComponentType } from "react";
+import { findByFilePath, findByProps } from '@vendetta/metro';
+import { General } from "@vendetta/ui/components";
+import { ComponentProps, ComponentType, ReactNode } from "react";
+import { View } from "react-native";
+import { lazyDestructure } from '../utils/lazy';
+const { Button, Text } = General;
 
 type ActionButtonProps = Omit<ComponentProps<typeof Button>, "onPress"> & {
     onPress?: () => void | Promise<unknown>;
@@ -9,13 +12,28 @@ type ActionButtonProps = Omit<ComponentProps<typeof Button>, "onPress"> & {
 const {
     AlertModal: _AlertModal,
     AlertActionButton: _AlertActionButton
-} = findByProps("AlertModal", "AlertActions");
-
-const { Text } = Forms;
+} = lazyDestructure(() => findByProps("AlertModal", "AlertActions"));
 
 export const AlertActionButton = _AlertActionButton as ComponentType<ActionButtonProps>;
 
 export default function AlertModal(props: Record<string, unknown>) {
+    const forwardFailedModal = findByFilePath("modules/forwarding/native/ForwardFailedAlertModal.tsx");
+
+    // ponyfill for extraContent
+    if (!forwardFailedModal && "extraContent" in props) {
+        props.content = (
+            <View style={{ gap: 16 }}>
+                <Text variant="text-md/medium" color="text-muted">
+                    {props.content as string}
+                </Text>
+                <View>
+                    {props.extraContent as ReactNode}
+                </View>
+            </View>
+        );
+
+        delete props.extraContent;
+    }
 
     return <_AlertModal {...props} />;
 }

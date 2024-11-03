@@ -35,20 +35,23 @@ export function Settings() {
     };
 
     const addNewEntry = () => {
-        openAlert("UserIDInputAlert", <UserIDInputAlert title='User ID' onConfirm={(userId) => {
-            dismissAlert("UserIDInputAlert");
-            util.openSheet(CustomColorPickerActionSheet, {
-                color: util.colorConverter.toInt("#000000"),
-                title: "Select Color",
-                onSelect: (color) => {
-                    const hexColor = util.colorConverter.toHex(color);
-                    const entries = colorEntries || [];
-                    entries.push({ userId, color: hexColor });
-                    storage.colors = { entries };
-                    toasts.showToast("Color entry added!");
-                }
-            });
-        }} />);
+        openAlert("UserIDInputAlert",
+            <UserIDInputAlert title='User ID'
+                onConfirm={(userId) => {
+                    dismissAlert("UserIDInputAlert");
+                    util.openSheet(CustomColorPickerActionSheet, {
+                        color: util.colorConverter.toInt("#000000"),
+                        title: "Select Color",
+                        onSelect: (color) => {
+                            const hexColor = util.colorConverter.toHex(color);
+                            const entries = colorEntries || [];
+                            entries.push({ userId, color: hexColor });
+                            storage.colors = { entries };
+                            toasts.showToast("Color entry added!");
+                        }
+                    });
+                }}
+            />);
     };
 
     return (
