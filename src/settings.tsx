@@ -31,7 +31,7 @@ const EditUserIdModal = ({ entry, index, colorEntries }) => {
                     style={{ marginBottom: 16 }}
                 />
                 <Button
-                    text="Save"
+                    title="Save"
                     onPress={() => {
                         if (!newUserId) {
                             toasts.showToast("Please enter a valid User ID");
