@@ -4,10 +4,8 @@ import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
-import { showSimpleActionSheet } from './components/action-sheet';
-import { EditUserIdModal } from './components/edit-user-modal';
+import { UserIDInputAlert } from './components/user-id-input-alert';
 import * as util from './components/util';
-import { UserIdInputModal } from './components/UserIdInputModal';
 const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");
@@ -21,7 +19,7 @@ export function Settings() {
     const handleLongPress = (entry, index) => {
         openAlert({
             key: "edit-userid-modal",
-            content: <UserIdInputModal
+            content: <UserIDInputAlert
                 title="Edit User ID"
                 initialValue={entry.userId}
                 onConfirm={(newId) => {
@@ -36,26 +34,20 @@ export function Settings() {
     };
 
     const addNewEntry = () => {
-        openAlert({
-            key: "add-userid-modal",
-            content: <UserIdInputModal
-                title="Add New User ID"
-                onConfirm={(userId) => {
-                    dismissAlert("add-userid-modal");
-                    util.openSheet(CustomColorPickerActionSheet, {
-                        color: util.colorConverter.toInt("#000000"),
-                        title: "Select Color",
-                        onSelect: (color) => {
-                            const hexColor = util.colorConverter.toHex(color);
-                            const entries = colorEntries || [];
-                            entries.push({ userId, color: hexColor });
-                            storage.colors = { entries };
-                            toasts.showToast("Color entry added!");
-                        }
-                    });
-                }}
-            />
-        });
+        openAlert("UserIDInputAlert", <UserIDInputAlert title='User ID' onConfirm={(userId) => {
+            dismissAlert("UserIDInputAlert");
+            util.openSheet(CustomColorPickerActionSheet, {
+                color: util.colorConverter.toInt("#000000"),
+                title: "Select Color",
+                onSelect: (color) => {
+                    const hexColor = util.colorConverter.toHex(color);
+                    const entries = colorEntries || [];
+                    entries.push({ userId, color: hexColor });
+                    storage.colors = { entries };
+                    toasts.showToast("Color entry added!");
+                }
+            });
+        }} />);
     };
 
     return (

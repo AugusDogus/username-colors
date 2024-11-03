@@ -6,7 +6,7 @@ import AlertModal, { AlertActionButton } from "./alert-modal";
 const { Stack, TextInput, ScrollView } = Forms;
 const { Button } = General;
 
-export function UserIdInputModal({
+export function UserIDInputAlert({
     initialValue = "",
     onConfirm,
     title
