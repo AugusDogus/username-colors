@@ -4,33 +4,44 @@ import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
-import { ColorPicker } from './components/color-picker';
-import { TextInput } from './components/text-input';
 import * as util from "./components/util";
-
-const { FormText, FormSection } = Forms;
+const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const dialog = findByProps("show", "confirm", "close");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
+    const colorEntries = storage.colors?.entries || [];
+
     const addNewEntry = () => {
-        // Open a sheet to input user ID and pick color
-        util.openSheet(CustomColorPickerActionSheet, {
-            color: util.colorConverter.toInt("#000000"),
-            title: "Select Color",
-            onSelect: (color) => {
-                const hexColor = util.colorConverter.toHex(color);
-                // Prompt for user ID (you might want to create a custom sheet for this)
-                dialog.show({
-                    title: "Enter User ID",
-                    content: "Please enter the Discord User ID",
-                    confirmText: "Save",
-                    cancelText: "Cancel",
-                    onConfirm: (userId) => {
+        let inputUserId = "";
+
+        dialog.show({
+            title: "Enter User ID",
+            content: (
+                <FormInput
+                    title="Discord User ID"
+                    placeholder="Enter the user's Discord ID"
+                    value={inputUserId}
+                    onChange={(value) => inputUserId = value}
+                />
+            ),
+            confirmText: "Next",
+            cancelText: "Cancel",
+            onConfirm: () => {
+                if (!inputUserId) {
+                    toasts.showToast("Please enter a valid User ID");
+                    return;
+                }
+
+                util.openSheet(CustomColorPickerActionSheet, {
+                    color: util.colorConverter.toInt("#000000"),
+                    title: "Select Color",
+                    onSelect: (color) => {
+                        const hexColor = util.colorConverter.toHex(color);
                         const entries = storage.colors?.entries || [];
-                        entries.push({ userId, color: hexColor });
+                        entries.push({ userId: inputUserId, color: hexColor });
                         storage.colors = { entries };
                         toasts.showToast("Color entry added!");
                     }
@@ -41,8 +52,44 @@ export function Settings() {
 
     return (
         <>
-            <TextInput />
-            <ColorPicker />
+            <FormSection title="Custom Colors">
+                {colorEntries.map((entry, index) => (
+                    <FormRow
+                        key={index}
+                        label={`User ID: ${entry.userId}`}
+                        subLabel="Tap to change color"
+                        onPress={() => {
+                            util.openSheet(CustomColorPickerActionSheet, {
+                                color: util.colorConverter.toInt(entry.color),
+                                title: "Select Color",
+                                onSelect: (color) => {
+                                    const hexColor = util.colorConverter.toHex(color);
+                                    const updatedEntries = [...colorEntries];
+                                    updatedEntries[index] = { ...entry, color: hexColor };
+                                    storage.colors = { entries: updatedEntries };
+                                    toasts.showToast("Color updated!");
+                                }
+                            });
+                        }}
+                        trailing={
+                            <View style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: 12,
+                                backgroundColor: entry.color,
+                                borderWidth: 1,
+                                borderColor: semanticColors.BACKGROUND_SECONDARY
+                            }} />
+                        }
+                    />
+                ))}
+                {colorEntries.length === 0 && (
+                    <FormRow
+                        label="No Colors Set"
+                        subLabel="Use the + button to add a custom color"
+                    />
+                )}
+            </FormSection>
             <TouchableOpacity
                 style={styles.fab}
                 onPress={addNewEntry}
