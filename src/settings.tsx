@@ -170,6 +170,7 @@ export function Settings() {
                 label="Add New Entry"
                 leading={
                     <Button
+                        title="Add New Entry"
                         size="sm"
                         style={{
                             backgroundColor: semanticColors.BUTTON_ACTIVE,
