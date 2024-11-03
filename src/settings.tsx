@@ -166,31 +166,15 @@ export function Settings() {
                     }
                 />
             ))}
-            <FormRow
-                label="Add New Entry"
-                leading={
-                    <Button
-                        title="Add New Entry"
-                        size="sm"
-                        style={{
-                            backgroundColor: semanticColors.BUTTON_ACTIVE,
-                            width: 36,
-                            height: 36
-                        }}
-                        onPress={addNewEntry}
-                        icon={
-                            <Image
-                                source={getAssetIDByName("ic_add_24px")}
-                                style={{
-                                    width: 20,
-                                    height: 20,
-                                    tintColor: "white"
-                                }}
-                            />
-                        }
-                    />
-                }
-            />
+            <TouchableOpacity
+                style={styles.fab}
+                onPress={addNewEntry}
+            >
+                <Image
+                    source={getAssetIDByName("ic_add_24px")}
+                    style={styles.fabIcon}
+                />
+            </TouchableOpacity>
         </>
     );
 }
@@ -200,7 +184,7 @@ const styles = stylesheet.createThemedStyleSheet({
         position: "absolute",
         bottom: 20,
         right: 20,
-        backgroundColor: semanticColors.BUTTON_SECONDARY_BACKGROUND,
+        backgroundColor: semanticColors.BUTTON_ACTIVE,
         borderRadius: 50,
         width: 56,
         height: 56,
@@ -211,6 +195,6 @@ const styles = stylesheet.createThemedStyleSheet({
     fabIcon: {
         width: 24,
         height: 24,
-        tintColor: semanticColors.BUTTON_SECONDARY_TEXT
+        tintColor: "white"
     }
 });
