@@ -21,46 +21,42 @@ const customizeableColors = [
 
 export function ColorPicker() {
     return (<>
-        {
-            storage?.switches?.customizeable && (<>
-                <View style={[styles.subText]}>{
-                    customizeableColors?.map((obj) => {
-                        const whenPressed = () => util?.openSheet(
-                            CustomColorPickerActionSheet, {
-                            color: util?.colorConverter?.toInt(storage.colors[obj.id] || obj?.defaultColor || "#000"),
-                            onSelect: (color) => {
-                                const value = util?.colorConverter?.toHex(color)
-                                // console.log(color, value)
-                                storage.colors[obj.id] = value
-                            }
-                        }
-                        );
-
-                        return (<>
-                            <FormRow
-                                label={obj?.label}
-                                subLabel={obj?.subLabel || "Click to Update"}
-                                onPress={whenPressed}
-                                trailing={
-                                    <TouchableOpacity onPress={whenPressed}>
-                                        <Image
-                                            source={{ uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mJsrQAAAgwBAJ9P6qYAAAAASUVORK5CYII=' }}
-                                            style={{
-                                                width: 32,
-                                                height: 32,
-                                                borderRadius: 10,
-                                                backgroundColor: storage?.colors[obj.id] || customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
-                                            }}
-                                        />
-                                    </TouchableOpacity>
-                                }
-                            />
-                        </>)
-                    })
+        <View style={[styles.subText]}>{
+            customizeableColors?.map((obj) => {
+                const whenPressed = () => util?.openSheet(
+                    CustomColorPickerActionSheet, {
+                    color: util?.colorConverter?.toInt(storage.colors[obj.id] || obj?.defaultColor || "#000"),
+                    onSelect: (color) => {
+                        const value = util?.colorConverter?.toHex(color)
+                        // console.log(color, value)
+                        storage.colors[obj.id] = value
+                    }
                 }
-                </View>
-            </>)
+                );
+
+                return (<>
+                    <FormRow
+                        label={obj?.label}
+                        subLabel={obj?.subLabel || "Click to Update"}
+                        onPress={whenPressed}
+                        trailing={
+                            <TouchableOpacity onPress={whenPressed}>
+                                <Image
+                                    source={{ uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mJsrQAAAgwBAJ9P6qYAAAAASUVORK5CYII=' }}
+                                    style={{
+                                        width: 32,
+                                        height: 32,
+                                        borderRadius: 10,
+                                        backgroundColor: storage?.colors[obj.id] || customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
+                                    }}
+                                />
+                            </TouchableOpacity>
+                        }
+                    />
+                </>)
+            })
         }
+        </View>
     </>)
 }
 
