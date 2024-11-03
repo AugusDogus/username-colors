@@ -49,6 +49,47 @@ const EditUserIdModal = ({ entry, index, colorEntries }) => {
     );
 };
 
+const AddEntryModal = ({ colorEntries, setInputUserId, inputUserId }) => {
+    return (
+        <Modal
+            mkey="add-entry-modal"
+            title="Add New Entry"
+        >
+            <View style={{ padding: 16 }}>
+                <FormInput
+                    title="Discord User ID"
+                    placeholder="Enter the user's Discord ID"
+                    value={inputUserId}
+                    onChange={(value) => setInputUserId(value)}
+                    style={{ marginBottom: 16 }}
+                />
+                <Button
+                    title="Next"
+                    onPress={() => {
+                        if (!inputUserId) {
+                            toasts.showToast("Please enter a valid User ID");
+                            return;
+                        }
+                        popModal("add-entry-modal");
+                        util.openSheet(CustomColorPickerActionSheet, {
+                            color: util.colorConverter.toInt("#000000"),
+                            title: "Select Color",
+                            onSelect: (color) => {
+                                const hexColor = util.colorConverter.toHex(color);
+                                const entries = colorEntries || [];
+                                entries.push({ userId: inputUserId, color: hexColor });
+                                storage.colors = { entries };
+                                setInputUserId(""); // Reset the input
+                                toasts.showToast("Color entry added!");
+                            }
+                        });
+                    }}
+                />
+            </View>
+        </Modal>
+    );
+};
+
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
     const [inputUserId, setInputUserId] = React.useState("");
@@ -105,30 +146,13 @@ export function Settings() {
     };
 
     const addNewEntry = () => {
-        util.openSheet(CustomColorPickerActionSheet, {
-            color: util.colorConverter.toInt("#000000"),
-            title: "Select Color",
-            onSelect: (color) => {
-                if (!inputUserId) {
-                    toasts.showToast("Please enter a valid User ID");
-                    return;
-                }
-                const hexColor = util.colorConverter.toHex(color);
-                const entries = storage.colors?.entries || [];
-                entries.push({ userId: inputUserId, color: hexColor });
-                storage.colors = { entries };
-                setInputUserId(""); // Reset the input
-                toasts.showToast("Color entry added!");
-            },
-            header: (
-                <View style={{ padding: 16, paddingBottom: 0 }}>
-                    <FormInput
-                        title="Discord User ID"
-                        placeholder="Enter the user's Discord ID"
-                        value={inputUserId}
-                        onChange={(value) => setInputUserId(value)}
-                    />
-                </View>
+        pushModal("add-entry-modal", {
+            render: () => (
+                <AddEntryModal
+                    colorEntries={colorEntries}
+                    inputUserId={inputUserId}
+                    setInputUserId={setInputUserId}
+                />
             )
         });
     };
