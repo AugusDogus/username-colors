@@ -4,6 +4,7 @@ import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
+import { showToast } from '@vendetta/ui/toasts';
 import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
@@ -20,12 +21,34 @@ export function Settings() {
         dialog.show({
             title: "Enter User ID",
             content: (
-                <FormInput
-                    title="Discord User ID"
-                    placeholder="Enter the user's Discord ID"
-                    value={inputUserId}
-                    onChange={(value) => inputUserId = value}
-                />
+
+                <View>
+                    <FormInput
+                        title="Discord User ID"
+                        placeholder="Enter the user's Discord ID"
+                        value={inputUserId}
+                        onChange={(value) => inputUserId = value}
+                    />
+                    <FormRow
+                        label="Minimum Characters"
+                        subLabel="The minimum amount of characters for Char Counter to show up"
+                        leading={
+                            <FormRow.Icon source={getAssetIDByName("ic_message_edit")} />
+                        }
+                    />
+                    <FormInput
+                        title=""
+                        keyboardType="numeric"
+                        placeholder="1"
+                        value={'hello world'}
+                        onChange={(x: string) =>
+                            (showToast(x))
+                        }
+                        style={{ marginTop: -25, marginHorizontal: 12 }}
+                    />
+                </View>
+
+
             ),
             confirmText: "Next",
             cancelText: "Cancel",
