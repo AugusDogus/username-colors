@@ -6,10 +6,11 @@ import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { UserIDInputAlert } from './components/user-id-input-alert';
 import * as util from './components/util';
+import { lazyDestructure } from './utils/lazy';
 const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");
-const { openAlert, dismissAlert } = findByProps("openAlert", "dismissAlert");
+const { openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
