@@ -5,88 +5,47 @@ import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { showSimpleActionSheet } from './components/action-sheet';
-import Modal from "./components/modal";
-import { popModal, pushModal } from "./components/types";
-import * as util from "./components/util";
-const { FormText, FormSection, FormInput, FormRow } = Forms;
+import { EditUserIdModal } from './components/edit-user-modal';
+import * as util from './components/util';
+const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
-const dialog = findByProps("show", "confirm", "close");
+const { pushModal, popModal } = findByProps("pushModal", "popModal");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
-const EditUserIdModal = ({ entry, index, colorEntries }) => {
-    const [newUserId, setNewUserId] = React.useState(entry.userId);
-
+const AddEntryModal = ({ colorEntries, inputUserId, setInputUserId }) => {
     return (
-        <Modal
-            mkey="edit-userid-modal"
-            title="Edit User ID"
-        >
-            <View style={{ padding: 16 }}>
-                <FormInput
-                    title="Discord User ID"
-                    placeholder="Enter the user's Discord ID"
-                    value={newUserId}
-                    onChange={setNewUserId}
-                    style={{ marginBottom: 16 }}
-                />
-                <Button
-                    title="Save"
-                    onPress={() => {
-                        if (!newUserId) {
-                            toasts.showToast("Please enter a valid User ID");
-                            return;
+        <View style={{ padding: 16 }}>
+            <FormInput
+                title="Discord User ID"
+                placeholder="Enter the user's Discord ID"
+                value={inputUserId}
+                onChange={(value) => setInputUserId(value)}
+                style={{ marginBottom: 16 }}
+            />
+            <Button
+                title="Next"
+                onPress={() => {
+                    if (!inputUserId) {
+                        toasts.showToast("Please enter a valid User ID");
+                        return;
+                    }
+                    popModal("add-entry-modal");
+                    util.openSheet(CustomColorPickerActionSheet, {
+                        color: util.colorConverter.toInt("#000000"),
+                        title: "Select Color",
+                        onSelect: (color) => {
+                            const hexColor = util.colorConverter.toHex(color);
+                            const entries = colorEntries || [];
+                            entries.push({ userId: inputUserId, color: hexColor });
+                            storage.colors = { entries };
+                            setInputUserId(""); // Reset the input
+                            toasts.showToast("Color entry added!");
                         }
-                        const updatedEntries = [...colorEntries];
-                        updatedEntries[index] = { ...entry, userId: newUserId };
-                        storage.colors = { entries: updatedEntries };
-                        toasts.showToast("User ID updated!");
-                        popModal("edit-userid-modal");
-                    }}
-                />
-            </View>
-        </Modal>
-    );
-};
-
-const AddEntryModal = ({ colorEntries, setInputUserId, inputUserId }) => {
-    return (
-        <Modal
-            mkey="add-entry-modal"
-            title="Add New Entry"
-        >
-            <View style={{ padding: 16 }}>
-                <FormInput
-                    title="Discord User ID"
-                    placeholder="Enter the user's Discord ID"
-                    value={inputUserId}
-                    onChange={(value) => setInputUserId(value)}
-                    style={{ marginBottom: 16 }}
-                />
-                <Button
-                    title="Next"
-                    onPress={() => {
-                        if (!inputUserId) {
-                            toasts.showToast("Please enter a valid User ID");
-                            return;
-                        }
-                        popModal("add-entry-modal");
-                        util.openSheet(CustomColorPickerActionSheet, {
-                            color: util.colorConverter.toInt("#000000"),
-                            title: "Select Color",
-                            onSelect: (color) => {
-                                const hexColor = util.colorConverter.toHex(color);
-                                const entries = colorEntries || [];
-                                entries.push({ userId: inputUserId, color: hexColor });
-                                storage.colors = { entries };
-                                setInputUserId(""); // Reset the input
-                                toasts.showToast("Color entry added!");
-                            }
-                        });
-                    }}
-                />
-            </View>
-        </Modal>
+                    });
+                }}
+            />
+        </View>
     );
 };
 
@@ -146,14 +105,24 @@ export function Settings() {
     };
 
     const addNewEntry = () => {
-        pushModal("add-entry-modal", {
-            render: () => (
-                <AddEntryModal
-                    colorEntries={colorEntries}
-                    inputUserId={inputUserId}
-                    setInputUserId={setInputUserId}
-                />
-            )
+        pushModal({
+            key: "add-entry-modal",
+            modal: {
+                key: "add-entry-modal",
+                modal: () => (
+                    <AddEntryModal
+                        colorEntries={colorEntries}
+                        inputUserId={inputUserId}
+                        setInputUserId={setInputUserId}
+                    />
+                ),
+                animation: "slide-up",
+                shouldPersistUnderModals: false,
+                props: {
+                    title: "Add New Entry"
+                },
+                closable: true
+            }
         });
     };
 
