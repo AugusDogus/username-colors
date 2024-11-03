@@ -7,24 +7,6 @@ const { openLazy, hideActionSheet } = findByProps(
   'hideActionSheet'
 );
 
-export function makeDefaults(object, defaults) {
-  if (object != undefined) {
-    if (defaults != undefined) {
-      for (const key of Object.keys(defaults)) {
-        if (
-          typeof defaults[key] === 'object' &&
-          !Array.isArray(defaults[key])
-        ) {
-          if (typeof object[key] !== 'object') object[key] = {};
-          makeDefaults(object[key], defaults[key]);
-        } else {
-          object[key] ??= defaults[key];
-        }
-      }
-    }
-  }
-}
-
 export function openSheet(sheet, props) {
   try {
     openLazy(

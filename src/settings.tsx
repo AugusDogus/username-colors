@@ -1,3 +1,4 @@
+import { lazyDestructure } from '@bunny/utils/lazy';
 import { findByName, findByProps } from '@vendetta/metro';
 import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
@@ -6,7 +7,6 @@ import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { UserIDInputAlert } from './components/user-id-input-alert';
 import * as util from './components/util';
-import { lazyDestructure } from './utils/lazy';
 const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");

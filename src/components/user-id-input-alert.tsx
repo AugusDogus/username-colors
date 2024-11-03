@@ -1,7 +1,8 @@
-import { React, clipboard } from '@vendetta/metro/common';
-import { getAssetIDByName } from "@vendetta/ui/assets";
+import { clipboard } from '@bunny/metro/common';
+import { AlertActionButton, AlertModal } from '@bunny/ui/components/wrappers';
+import { React } from '@vendetta/metro/common';
+import { getAssetIDByName } from '@vendetta/ui/assets';
 import { Forms, General } from "@vendetta/ui/components";
-import AlertModal, { AlertActionButton } from "./alert-modal";
 
 const { Stack, TextInput, ScrollView } = Forms;
 const { Button } = General;
