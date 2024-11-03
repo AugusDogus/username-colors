@@ -1,10 +1,9 @@
 import { findByName, findByProps } from '@vendetta/metro';
-import { stylesheet } from '@vendetta/metro/common';
+import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
-import { useState } from "react";
 import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
@@ -14,7 +13,7 @@ const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
-    const [inputUserId, setInputUserId] = useState("");
+    const [inputUserId, setInputUserId] = React.useState("");
     const addNewEntry = () => {
 
         dialog.show({
