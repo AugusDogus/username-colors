@@ -1,7 +1,8 @@
-import { findByFilePath, findByProps } from '@vendetta/metro';
+import { findByProps } from '@vendetta/metro';
 import { General } from "@vendetta/ui/components";
 import { ComponentProps, ComponentType, ReactNode } from "react";
 import { View } from "react-native";
+import { findByFilePath } from '../metro';
 import { lazyDestructure } from '../utils/lazy';
 const { Button, Text } = General;
 

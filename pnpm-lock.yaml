@@ -11,6 +11,9 @@ importers:
       '@swc/helpers':
         specifier: ^0.4.14
         version: 0.4.37
+      es-toolkit:
+        specifier: ^1.26.1
+        version: 1.26.1
     devDependencies:
       '@rollup/plugin-commonjs':
         specifier: ^24.0.0
@@ -1436,6 +1439,9 @@ packages:
 
   es-module-lexer@1.5.4:
     resolution: {integrity: sha512-MVNK56NiMrOwitFB7cqDwq0CQutbw+0BvLshJSse0MUNU+y1FC3bUS/AQg7oUng+/wKrrki7JfmwtVHkVfPLlw==}
+
+  es-toolkit@1.26.1:
+    resolution: {integrity: sha512-E3H14lHWk8JpupVpIRA1gfNF4r953abHTFW+X1Rp7zl7eG37ksuthfEA4FinyVF/Y807vzzfQS1nubeZk2LTVA==}
 
   esbuild@0.16.17:
     resolution: {integrity: sha512-G8LEkV0XzDMNwXKgM0Jwu3nY3lSTwSGY6XbxM9cr9+s0T/qSV1q1JVPBGzm3dcjhCic9+emZDmMffkwgPeOeLg==}
@@ -4078,6 +4084,8 @@ snapshots:
       stackframe: 1.3.4
 
   es-module-lexer@1.5.4: {}
+
+  es-toolkit@1.26.1: {}
 
   esbuild@0.16.17:
     optionalDependencies:
