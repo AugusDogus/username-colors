@@ -4,11 +4,11 @@ import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
+import { showSimpleActionSheet } from './components/action-sheet';
 import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const dialog = findByProps("show", "confirm", "close");
-const { showActionSheet } = findByProps("showActionSheet");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
@@ -17,8 +17,11 @@ export function Settings() {
     const [inputUserId, setInputUserId] = React.useState("");
 
     const handleLongPress = (entry, index) => {
-        showActionSheet({
-            title: `User ID: ${entry.userId}`,
+        showSimpleActionSheet({
+            key: "CardOverflow",
+            header: {
+                title: `User ID: ${entry.userId}`
+            },
             options: [
                 {
                     label: "Modify Color",
