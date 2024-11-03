@@ -13,16 +13,17 @@ const { pushModal, popModal } = findByProps("pushModal", "popModal");
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
-    const colorEntries = storage.colors?.entries || [];
+    const [entries, setEntries] = React.useState(storage.colors?.entries || []);
 
     const handleLongPress = (entry, index) => {
         util.openSheet(UserIDInputAlert, {
             title: "Edit User ID",
             initialValue: entry.userId,
             onConfirm: (newId) => {
-                const updatedEntries = [...colorEntries];
+                const updatedEntries = [...entries];
                 updatedEntries[index] = { ...entry, userId: newId };
                 storage.colors = { entries: updatedEntries };
+                setEntries(updatedEntries);
                 toasts.showToast("User ID updated!");
             }
         });
@@ -40,9 +41,9 @@ export function Settings() {
                     title: "Select Color",
                     onSelect: (color) => {
                         const hexColor = util.colorConverter.toHex(color);
-                        const entries = colorEntries || [];
-                        entries.push({ userId, color: hexColor });
-                        storage.colors = { entries };
+                        const newEntries = [...entries, { userId, color: hexColor }];
+                        storage.colors = { entries: newEntries };
+                        setEntries(newEntries);
                         toasts.showToast("Color entry added!");
                     }
                 });
@@ -52,7 +53,7 @@ export function Settings() {
 
     return (
         <>
-            {colorEntries.map((entry, index) => (
+            {entries.map((entry, index) => (
                 <FormRow
                     key={index}
                     label={`User ID: ${entry.userId}`}
@@ -62,10 +63,12 @@ export function Settings() {
                             color: util.colorConverter.toInt(entry.color),
                             title: "Select Color",
                             onSelect: (color) => {
+                                FormRow
                                 const hexColor = util.colorConverter.toHex(color);
-                                const updatedEntries = [...colorEntries];
+                                const updatedEntries = [...entries];
                                 updatedEntries[index] = { ...entry, color: hexColor };
                                 storage.colors = { entries: updatedEntries };
+                                setEntries(updatedEntries);
                                 toasts.showToast("Color updated!");
                             }
                         });
