@@ -15,6 +15,8 @@
 		"esbuild": "^0.16.14",
 		"rollup": "^3.9.1",
 		"rollup-plugin-esbuild": "^5.0.0",
+		"rollup-plugin-esbuild-minify": "^1.1.2",
+		"rollup-plugin-swc3": "^0.12.1",
 		"vendetta-types": "^2.4.21"
 	},
 	"pnpm": {

@@ -1,8 +1,9 @@
 import { createHash } from 'crypto';
 import { readFile, writeFile } from 'fs/promises';
 
-import swc from '@swc/core';
 import { rollup } from 'rollup';
+import { minify } from 'rollup-plugin-esbuild-minify';
+import swc from 'rollup-plugin-swc3';
 
 const extensions = ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.cts', '.mts'];
 
