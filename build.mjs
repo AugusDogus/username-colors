@@ -1,46 +1,48 @@
 import { createHash } from 'crypto';
 import { readFile, writeFile } from 'fs/promises';
+import { extname } from 'path';
 
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import swc from '@swc/core';
 import { rollup } from 'rollup';
-import { minify } from 'rollup-plugin-esbuild-minify';
-import swc from 'rollup-plugin-swc3';
+import esbuild from 'rollup-plugin-esbuild';
 
 const extensions = ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.cts', '.mts'];
 
 /** @type import("rollup").InputPluginOption */
 const plugins = [
-  swc({
-    jsc: {
-      target: undefined,
-      transform: {
-        react: {
-          runtime: 'automatic',
+  nodeResolve(),
+  commonjs(),
+  {
+    name: 'swc',
+    async transform(code, id) {
+      const ext = extname(id);
+      if (!extensions.includes(ext)) return null;
+
+      const ts = ext.includes('ts');
+      const tsx = ts ? ext.endsWith('x') : undefined;
+      const jsx = !ts ? ext.endsWith('x') : undefined;
+
+      const result = await swc.transform(code, {
+        filename: id,
+        jsc: {
+          externalHelpers: true,
+          parser: {
+            syntax: ts ? 'typescript' : 'ecmascript',
+            tsx,
+            jsx,
+          },
         },
-      },
+        env: {
+          targets: 'defaults',
+          include: ['transform-classes', 'transform-arrow-functions'],
+        },
+      });
+      return result.code;
     },
-    // https://github.com/facebook/hermes/blob/3815fec63d1a6667ca3195160d6e12fee6a0d8d5/doc/Features.md
-    // https://github.com/facebook/hermes/issues/696#issuecomment-1396235791
-    env: {
-      targets: 'fully supports es6',
-      include: [
-        'transform-block-scoping',
-        'transform-classes',
-        'transform-async-to-generator',
-        'transform-async-generator-functions',
-      ],
-      exclude: [
-        'transform-parameters',
-        'transform-template-literals',
-        'transform-exponentiation-operator',
-        'transform-named-capturing-groups-regex',
-        'transform-nullish-coalescing-operator',
-        'transform-object-rest-spread',
-        'transform-optional-chaining',
-        'transform-logical-assignment-operators',
-      ],
-    },
-  }),
-  minify(),
+  },
+  esbuild({ minify: true }),
 ];
 
 const manifest = JSON.parse(await readFile(`./manifest.json`));
@@ -58,9 +60,6 @@ try {
     globals(id) {
       if (id.startsWith('@vendetta'))
         return id.substring(1).replace(/\//g, '.');
-      if (id.startsWith('@bunny')) {
-        return id.substring(1).replace(/\//g, '.');
-      }
       const map = {
         react: 'window.React',
       };
@@ -69,8 +68,7 @@ try {
     },
     format: 'iife',
     compact: true,
-    exports: 'default',
-    name: 'plugin',
+    exports: 'named',
   });
   await bundle.close();
 
