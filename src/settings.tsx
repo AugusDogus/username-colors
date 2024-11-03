@@ -166,23 +166,32 @@ export function Settings() {
                     }
                 />
             ))}
-            {colorEntries.length === 0 && (
-                <FormRow
-                    label="No Colors Set"
-                    subLabel="Use the + button to add a custom color"
-                />
-            )}
-            <TouchableOpacity
-                style={styles.fab}
-                onPress={addNewEntry}
-            >
-                <Image
-                    source={getAssetIDByName("ic_add_24px")}
-                    style={styles.fabIcon}
-                />
-            </TouchableOpacity>
+            <FormRow
+                label="Add New Entry"
+                leading={
+                    <Button
+                        size="sm"
+                        style={{
+                            backgroundColor: semanticColors.BUTTON_ACTIVE,
+                            width: 36,
+                            height: 36
+                        }}
+                        onPress={addNewEntry}
+                        icon={
+                            <Image
+                                source={getAssetIDByName("ic_add_24px")}
+                                style={{
+                                    width: 20,
+                                    height: 20,
+                                    tintColor: "white"
+                                }}
+                            />
+                        }
+                    />
+                }
+            />
         </>
-    )
+    );
 }
 
 const styles = stylesheet.createThemedStyleSheet({
