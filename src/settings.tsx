@@ -5,12 +5,49 @@ import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { showSimpleActionSheet } from './components/action-sheet';
+import Modal from "./components/modal";
+import { popModal, pushModal } from "./components/types";
 import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const dialog = findByProps("show", "confirm", "close");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
+
+const EditUserIdModal = ({ entry, index, colorEntries }) => {
+    const [newUserId, setNewUserId] = React.useState(entry.userId);
+
+    return (
+        <Modal
+            mkey="edit-userid-modal"
+            title="Edit User ID"
+        >
+            <View style={{ padding: 16 }}>
+                <FormInput
+                    title="Discord User ID"
+                    placeholder="Enter the user's Discord ID"
+                    value={newUserId}
+                    onChange={setNewUserId}
+                    style={{ marginBottom: 16 }}
+                />
+                <Button
+                    text="Save"
+                    onPress={() => {
+                        if (!newUserId) {
+                            toasts.showToast("Please enter a valid User ID");
+                            return;
+                        }
+                        const updatedEntries = [...colorEntries];
+                        updatedEntries[index] = { ...entry, userId: newUserId };
+                        storage.colors = { entries: updatedEntries };
+                        toasts.showToast("User ID updated!");
+                        popModal("edit-userid-modal");
+                    }}
+                />
+            </View>
+        </Modal>
+    );
+};
 
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
@@ -23,6 +60,20 @@ export function Settings() {
                 title: `User ID: ${entry.userId}`
             },
             options: [
+                {
+                    label: "Modify User ID",
+                    onPress: () => {
+                        pushModal("edit-userid-modal", {
+                            render: () => (
+                                <EditUserIdModal
+                                    entry={entry}
+                                    index={index}
+                                    colorEntries={colorEntries}
+                                />
+                            )
+                        });
+                    }
+                },
                 {
                     label: "Modify Color",
                     onPress: () => {
