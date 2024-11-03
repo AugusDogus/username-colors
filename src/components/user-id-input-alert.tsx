@@ -35,54 +35,50 @@ export function UserIDInputAlert({
 
     return (
         <Dialog onConfirm={onConfirmWrapper} title={title}>
+            <Stack style={{ marginTop: -12 }}>
+                <TextInput
+                    autoFocus={true}
+                    isClearable={true}
+                    value={value}
+                    onChange={(v: string) => {
+                        setValue(v);
+                        if (error) setError("");
+                    }}
+                    returnKeyType="done"
+                    onSubmitEditing={onConfirmWrapper}
+                    state={error ? "error" : undefined}
+                    errorMessage={error || undefined}
+                    keyboardType="numeric"
+                />
+                <ScrollView
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    style={{ gap: 8 }}
+                >
+                    <Button
+                        size="sm"
+                        variant="tertiary"
+                        text="Import from clipboard"
+                        icon={getAssetIDByName("ic_clipboard")}
+                        onPress={() => clipboard.getString().then((str: string) => setValue(str))}
+                    />
+                </ScrollView>
+            </Stack>
+            <Stack>
+                <Button
+                    loading={isFetching}
+                    text="Confirm"
+                    variant="primary"
+                    disabled={!value}
+                    onPress={onConfirmWrapper}
+                />
+                <Button
+                    disabled={isFetching}
+                    text="Cancel"
+                    variant="secondary"
+                />
+            </Stack>
 
-            extraContent={
-                <Stack style={{ marginTop: -12 }}>
-                    <TextInput
-                        autoFocus={true}
-                        isClearable={true}
-                        value={value}
-                        onChange={(v: string) => {
-                            setValue(v);
-                            if (error) setError("");
-                        }}
-                        returnKeyType="done"
-                        onSubmitEditing={onConfirmWrapper}
-                        state={error ? "error" : undefined}
-                        errorMessage={error || undefined}
-                        keyboardType="numeric"
-                    />
-                    <ScrollView
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        style={{ gap: 8 }}
-                    >
-                        <Button
-                            size="sm"
-                            variant="tertiary"
-                            text="Import from clipboard"
-                            icon={getAssetIDByName("ic_clipboard")}
-                            onPress={() => clipboard.getString().then((str: string) => setValue(str))}
-                        />
-                    </ScrollView>
-                </Stack>
-            }
-            actions={
-                <Stack>
-                    <Button
-                        loading={isFetching}
-                        text="Confirm"
-                        variant="primary"
-                        disabled={!value}
-                        onPress={onConfirmWrapper}
-                    />
-                    <Button
-                        disabled={isFetching}
-                        text="Cancel"
-                        variant="secondary"
-                    />
-                </Stack>
-            }
         </Dialog>
     );
 } 

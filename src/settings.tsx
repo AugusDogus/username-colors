@@ -27,26 +27,26 @@ export function Settings() {
                     toasts.showToast("User ID updated!");
                 }}
             />
-        )
+        );
     };
 
     const addNewEntry = () => {
-        util.openSheet("UserIDInputAlert",
-            <UserIDInputAlert title='User ID'
-                onConfirm={(userId) => {
-                    util.openSheet(CustomColorPickerActionSheet, {
-                        color: util.colorConverter.toInt("#000000"),
-                        title: "Select Color",
-                        onSelect: (color) => {
-                            const hexColor = util.colorConverter.toHex(color);
-                            const entries = colorEntries || [];
-                            entries.push({ userId, color: hexColor });
-                            storage.colors = { entries };
-                            toasts.showToast("Color entry added!");
-                        }
-                    });
-                }}
-            />);
+        util.openSheet("user-id-input", <UserIDInputAlert
+            title='User ID'
+            onConfirm={(userId) => {
+                util.openSheet(CustomColorPickerActionSheet, {
+                    color: util.colorConverter.toInt("#000000"),
+                    title: "Select Color",
+                    onSelect: (color) => {
+                        const hexColor = util.colorConverter.toHex(color);
+                        const entries = colorEntries || [];
+                        entries.push({ userId, color: hexColor });
+                        storage.colors = { entries };
+                        toasts.showToast("Color entry added!");
+                    }
+                });
+            }}
+        />);
     };
 
     return (
