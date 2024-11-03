@@ -135,45 +135,43 @@ export function Settings() {
 
     return (
         <>
-            <FormSection title="Custom Colors">
-                {colorEntries.map((entry, index) => (
-                    <FormRow
-                        key={index}
-                        label={`User ID: ${entry.userId}`}
-                        subLabel="Tap to change color"
-                        onPress={() => {
-                            util.openSheet(CustomColorPickerActionSheet, {
-                                color: util.colorConverter.toInt(entry.color),
-                                title: "Select Color",
-                                onSelect: (color) => {
-                                    const hexColor = util.colorConverter.toHex(color);
-                                    const updatedEntries = [...colorEntries];
-                                    updatedEntries[index] = { ...entry, color: hexColor };
-                                    storage.colors = { entries: updatedEntries };
-                                    toasts.showToast("Color updated!");
-                                }
-                            });
-                        }}
-                        onLongPress={() => handleLongPress(entry, index)}
-                        trailing={
-                            <View style={{
-                                width: 24,
-                                height: 24,
-                                borderRadius: 12,
-                                backgroundColor: entry.color,
-                                borderWidth: 1,
-                                borderColor: semanticColors.BACKGROUND_SECONDARY
-                            }} />
-                        }
-                    />
-                ))}
-                {colorEntries.length === 0 && (
-                    <FormRow
-                        label="No Colors Set"
-                        subLabel="Use the + button to add a custom color"
-                    />
-                )}
-            </FormSection>
+            {colorEntries.map((entry, index) => (
+                <FormRow
+                    key={index}
+                    label={`User ID: ${entry.userId}`}
+                    subLabel="Tap to change color"
+                    onPress={() => {
+                        util.openSheet(CustomColorPickerActionSheet, {
+                            color: util.colorConverter.toInt(entry.color),
+                            title: "Select Color",
+                            onSelect: (color) => {
+                                const hexColor = util.colorConverter.toHex(color);
+                                const updatedEntries = [...colorEntries];
+                                updatedEntries[index] = { ...entry, color: hexColor };
+                                storage.colors = { entries: updatedEntries };
+                                toasts.showToast("Color updated!");
+                            }
+                        });
+                    }}
+                    onLongPress={() => handleLongPress(entry, index)}
+                    trailing={
+                        <View style={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: 12,
+                            backgroundColor: entry.color,
+                            borderWidth: 1,
+                            borderColor: semanticColors.BACKGROUND_SECONDARY
+                        }} />
+                    }
+                />
+            ))}
+            {colorEntries.length === 0 && (
+                <FormRow
+                    label="No Colors Set"
+                    subLabel="Use the + button to add a custom color"
+                />
+            )}
             <TouchableOpacity
                 style={styles.fab}
                 onPress={addNewEntry}
