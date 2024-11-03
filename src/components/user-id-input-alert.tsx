@@ -1,8 +1,7 @@
-import { clipboard } from '@bunny/metro/common';
-import { AlertActionButton, AlertModal } from '@bunny/ui/components/wrappers';
-import { React } from '@vendetta/metro/common';
+import { findByDisplayName } from '@vendetta/metro';
+import { clipboard, React } from '@vendetta/metro/common';
 import { getAssetIDByName } from '@vendetta/ui/assets';
-import { Forms, General } from "@vendetta/ui/components";
+import { Forms, General } from '@vendetta/ui/components';
 
 const { Stack, TextInput, ScrollView } = Forms;
 const { Button } = General;
@@ -31,11 +30,11 @@ export function UserIDInputAlert({
         onConfirm(value);
         setIsFetching(false);
     }
+    const Alert = findByDisplayName("FluxContainer(Alert)");
 
     return (
-        <AlertModal
-            title={title}
-            content="Enter the Discord User ID:"
+        <Alert>
+
             extraContent={
                 <Stack style={{ marginTop: -12 }}>
                     <TextInput
@@ -76,13 +75,13 @@ export function UserIDInputAlert({
                         disabled={!value}
                         onPress={onConfirmWrapper}
                     />
-                    <AlertActionButton
+                    <Button
                         disabled={isFetching}
                         text="Cancel"
                         variant="secondary"
                     />
                 </Stack>
             }
-        />
+        </Alert>
     );
 } 

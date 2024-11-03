@@ -3,7 +3,7 @@ import { constants, React, stylesheet } from "@vendetta/metro/common";
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { Forms, General } from "@vendetta/ui/components";
-import * as util from './util';
+import * as util from '../util';
 const { ScrollView, View, Text, TouchableOpacity, TextInput, Pressable, Image } = General;
 const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, FormSection, FormDivider, FormInput, FormSliderRow } = Forms;
 const HelpMessage = findByName("HelpMessage");
@@ -16,7 +16,7 @@ export function ColorPicker() {
     return (<>
         <View style={[styles.subText]}>{
             colorEntries?.map((entry) => {
-                const whenPressed = () => util?.openSheet(
+                const whenPressed = () => util.openSheet(
                     CustomColorPickerActionSheet, {
                     color: util?.colorConverter?.toInt(entry.color || "#000"),
                     onSelect: (color) => {

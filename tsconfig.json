@@ -8,5 +8,5 @@
     "jsx": "react-native",
     "allowJs": true
   },
-  "include": ["node_modules/vendetta-types", "node_modules/bn-types", "src"]
+  "include": ["node_modules/vendetta-types", "src"]
 }

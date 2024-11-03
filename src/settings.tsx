@@ -1,4 +1,3 @@
-import { lazyDestructure } from '@bunny/utils/lazy';
 import { findByName, findByProps } from '@vendetta/metro';
 import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
@@ -6,21 +5,19 @@ import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { UserIDInputAlert } from './components/user-id-input-alert';
-import * as util from './components/util';
+import * as util from './util';
 const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");
-const { openAlert, dismissAlert } = lazyDestructure(() => findByProps("openAlert", "dismissAlert"));
-
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
 
     const handleLongPress = (entry, index) => {
-        openAlert({
-            key: "edit-userid-modal",
-            content: <UserIDInputAlert
+        util.openSheet(
+            "edit-userid-modal",
+            <UserIDInputAlert
                 title="Edit User ID"
                 initialValue={entry.userId}
                 onConfirm={(newId) => {
@@ -28,17 +25,15 @@ export function Settings() {
                     updatedEntries[index] = { ...entry, userId: newId };
                     storage.colors = { entries: updatedEntries };
                     toasts.showToast("User ID updated!");
-                    dismissAlert("edit-userid-modal");
                 }}
             />
-        });
+        )
     };
 
     const addNewEntry = () => {
-        openAlert("UserIDInputAlert",
+        util.openSheet("UserIDInputAlert",
             <UserIDInputAlert title='User ID'
                 onConfirm={(userId) => {
-                    dismissAlert("UserIDInputAlert");
                     util.openSheet(CustomColorPickerActionSheet, {
                         color: util.colorConverter.toInt("#000000"),
                         title: "Select Color",

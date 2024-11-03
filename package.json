@@ -1,31 +1,30 @@
 {
-	"private": true,
-	"scripts": {
-		"build": "node build.mjs"
-	},
-	"dependencies": {
-		"@swc/helpers": "^0.4.14",
-		"es-toolkit": "^1.26.1"
-	},
-	"devDependencies": {
-		"@rollup/plugin-commonjs": "^24.0.0",
-		"@rollup/plugin-node-resolve": "^15.0.1",
-		"@swc/core": "^1.3.35",
-		"bn-types": "^0.7.2",
-		"esbuild": "^0.16.14",
-		"rollup": "^3.9.1",
-		"rollup-plugin-esbuild": "^5.0.0",
-		"rollup-plugin-esbuild-minify": "^1.1.2",
-		"rollup-plugin-swc3": "^0.12.1",
-		"vendetta-types": "^2.4.21"
-	},
-	"pnpm": {
-		"peerDependencyRules": {
-			"ignoreMissing": [
-				"react",
-				"react-native"
-			]
-		}
-	},
-	"packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.4.14",
+    "es-toolkit": "^1.26.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@swc/core": "^1.3.35",
+    "bn-types": "^0.7.2",
+    "esbuild": "^0.16.14",
+    "rollup": "^3.9.1",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "rollup-plugin-esbuild-minify": "^1.1.2",
+    "rollup-plugin-swc3": "^0.12.1",
+    "vendetta-types": "^2.4.21"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-native"
+      ]
+    }
+  }
 }
