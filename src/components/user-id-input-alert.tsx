@@ -1,4 +1,3 @@
-import { findByDisplayName } from '@vendetta/metro';
 import { clipboard, React } from '@vendetta/metro/common';
 import { getAssetIDByName } from '@vendetta/ui/assets';
 import { Forms, General } from '@vendetta/ui/components';
@@ -31,7 +30,6 @@ export function UserIDInputAlert({
         onConfirm(value);
         setIsFetching(false);
     }
-    const Alert = findByDisplayName("FluxContainer(Alert)");
 
     return (
         <Dialog onConfirm={onConfirmWrapper} title={title}>
