@@ -3,41 +3,39 @@ import { constants, React, stylesheet } from "@vendetta/metro/common";
 import { semanticColors, toasts } from "@vendetta/ui";
 import { Forms, General } from "@vendetta/ui/components";
 import * as util from './util';
+import { storage } from '@vendetta/plugin';
+import { getAssetIDByName } from "@vendetta/ui/assets";
 const { ScrollView, View, Text, TouchableOpacity, TextInput, Pressable, Image } = General;
 const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, FormSection, FormDivider, FormInput, FormSliderRow } = Forms;
 const HelpMessage = findByName("HelpMessage");
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 const dialog = findByProps("show", "confirm", "close");
 
-const customizeableColors = [
-    {
-        id: "textColor",
-        label: "Deleted Message Text Color",
-        subLabel: "Click to customize Deleted Message Text Color",
-        defaultColor: "#E40303",
-    }
-]
-
 export function ColorPicker() {
+    const colorEntries = storage.colors?.entries || [];
+
     return (<>
         <View style={[styles.subText]}>{
-            customizeableColors?.map((obj) => {
+            colorEntries?.map((entry) => {
                 const whenPressed = () => util?.openSheet(
                     CustomColorPickerActionSheet, {
-                    color: util?.colorConverter?.toInt(obj?.defaultColor || "#000"),
+                    color: util?.colorConverter?.toInt(entry.color || "#000"),
                     onSelect: (color) => {
                         const value = util?.colorConverter?.toHex(color)
                         console.log(color, value)
-                        toasts.showToast(`Color Updated ${color} | ${value}`)
-                        // storage.colors[obj.id] = value
+                        toasts.showToast(`Color Updated for ${entry.userId}`)
+                        
+                        const updatedEntries = colorEntries.map(e => 
+                            e.userId === entry.userId ? { ...e, color: value } : e
+                        );
+                        storage.colors = { entries: updatedEntries };
                     }
-                }
-                );
+                });
 
                 return (<>
                     <FormRow
-                        label={obj?.label}
-                        subLabel={obj?.subLabel || "Click to Update"}
+                        label={`User ID: ${entry.userId}`}
+                        subLabel="Click to update color"
                         onPress={whenPressed}
                         trailing={
                             <TouchableOpacity onPress={whenPressed}>
@@ -47,7 +45,7 @@ export function ColorPicker() {
                                         width: 32,
                                         height: 32,
                                         borderRadius: 10,
-                                        backgroundColor: customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
+                                        backgroundColor: entry.color || "#000"
                                     }}
                                 />
                             </TouchableOpacity>
@@ -55,8 +53,7 @@ export function ColorPicker() {
                     />
                 </>)
             })
-        }
-        </View>
+        }</View>
     </>)
 }
 
