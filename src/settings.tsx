@@ -4,6 +4,7 @@ import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
+import { useState } from "react";
 import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
@@ -13,18 +14,18 @@ const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
-
+    const [inputUserId, setInputUserId] = useState("");
     const addNewEntry = () => {
-        let inputUserId = "";
 
         dialog.show({
             title: "Enter User ID",
             body: (
                 <FormInput
+                    style={{ width: "100%" }}
                     title="Discord User ID"
                     placeholder="Enter the user's Discord ID"
                     value={inputUserId}
-                    onChange={(value) => inputUserId = value}
+                    onChange={(value) => setInputUserId(value)}
                 />
             ),
             confirmText: "Next",
