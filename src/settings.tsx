@@ -184,7 +184,7 @@ const styles = stylesheet.createThemedStyleSheet({
         position: "absolute",
         bottom: 20,
         right: 20,
-        backgroundColor: semanticColors.BUTTON_ACTIVE,
+        backgroundColor: semanticColors.INTERACTIVE_NORMAL,
         borderRadius: 50,
         width: 56,
         height: 56,
