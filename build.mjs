@@ -41,8 +41,6 @@ const plugins = [
     },
   }),
   minify(),
-  buildLogger(manifest.id),
-  manifestWriter(manifest),
 ];
 
 const manifest = JSON.parse(await readFile(`./manifest.json`));
