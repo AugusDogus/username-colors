@@ -15,25 +15,22 @@ export function Settings() {
     const colorEntries = storage.colors?.entries || [];
 
     const handleLongPress = (entry, index) => {
-        util.openSheet(
-            "edit-userid-modal",
-            <UserIDInputAlert
-                title="Edit User ID"
-                initialValue={entry.userId}
-                onConfirm={(newId) => {
-                    const updatedEntries = [...colorEntries];
-                    updatedEntries[index] = { ...entry, userId: newId };
-                    storage.colors = { entries: updatedEntries };
-                    toasts.showToast("User ID updated!");
-                }}
-            />
-        );
+        util.openSheet(UserIDInputAlert, {
+            title: "Edit User ID",
+            initialValue: entry.userId,
+            onConfirm: (newId) => {
+                const updatedEntries = [...colorEntries];
+                updatedEntries[index] = { ...entry, userId: newId };
+                storage.colors = { entries: updatedEntries };
+                toasts.showToast("User ID updated!");
+            }
+        });
     };
 
     const addNewEntry = () => {
-        util.openSheet("user-id-input", <UserIDInputAlert
-            title='User ID'
-            onConfirm={(userId) => {
+        util.openSheet(UserIDInputAlert, {
+            title: 'User ID',
+            onConfirm: (userId) => {
                 util.openSheet(CustomColorPickerActionSheet, {
                     color: util.colorConverter.toInt("#000000"),
                     title: "Select Color",
@@ -45,8 +42,8 @@ export function Settings() {
                         toasts.showToast("Color entry added!");
                     }
                 });
-            }}
-        />);
+            }
+        });
     };
 
     return (
