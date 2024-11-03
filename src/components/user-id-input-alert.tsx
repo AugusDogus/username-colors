@@ -2,6 +2,7 @@ import { findByDisplayName } from '@vendetta/metro';
 import { clipboard, React } from '@vendetta/metro/common';
 import { getAssetIDByName } from '@vendetta/ui/assets';
 import { Forms, General } from '@vendetta/ui/components';
+import Dialog from './dialog';
 
 const { Stack, TextInput, ScrollView } = Forms;
 const { Button } = General;
@@ -33,7 +34,7 @@ export function UserIDInputAlert({
     const Alert = findByDisplayName("FluxContainer(Alert)");
 
     return (
-        <Alert>
+        <Dialog onConfirm={onConfirmWrapper} title={title}>
 
             extraContent={
                 <Stack style={{ marginTop: -12 }}>
@@ -82,6 +83,6 @@ export function UserIDInputAlert({
                     />
                 </Stack>
             }
-        </Alert>
+        </Dialog>
     );
 } 
