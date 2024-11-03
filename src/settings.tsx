@@ -8,45 +8,74 @@ import * as util from "./components/util";
 const { FormText, FormSection, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const dialog = findByProps("show", "confirm", "close");
+const { showActionSheet } = findByProps("showActionSheet");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
 export function Settings() {
     const colorEntries = storage.colors?.entries || [];
     const [inputUserId, setInputUserId] = React.useState("");
-    const addNewEntry = () => {
 
-        dialog.show({
-            title: "Enter User ID",
-            body: (
-                <FormInput
-                    style={{ width: "100%" }}
-                    title="Discord User ID"
-                    placeholder="Enter the user's Discord ID"
-                    value={inputUserId}
-                    onChange={(value) => setInputUserId(value)}
-                />
-            ),
-            confirmText: "Next",
-            cancelText: "Cancel",
-            onConfirm: () => {
+    const handleLongPress = (entry, index) => {
+        showActionSheet({
+            title: `User ID: ${entry.userId}`,
+            options: [
+                {
+                    label: "Modify Color",
+                    onPress: () => {
+                        util.openSheet(CustomColorPickerActionSheet, {
+                            color: util.colorConverter.toInt(entry.color),
+                            title: "Select Color",
+                            onSelect: (color) => {
+                                const hexColor = util.colorConverter.toHex(color);
+                                const updatedEntries = [...colorEntries];
+                                updatedEntries[index] = { ...entry, color: hexColor };
+                                storage.colors = { entries: updatedEntries };
+                                toasts.showToast("Color updated!");
+                            }
+                        });
+                    }
+                },
+                {
+                    label: "Delete",
+                    isDestructive: true,
+                    onPress: () => {
+                        const updatedEntries = colorEntries.filter((_, i) => i !== index);
+                        storage.colors = { entries: updatedEntries };
+                        toasts.showToast("Color entry removed!");
+                    }
+                },
+                { label: "Cancel" }
+            ]
+        });
+    };
+
+    const addNewEntry = () => {
+        util.openSheet(CustomColorPickerActionSheet, {
+            color: util.colorConverter.toInt("#000000"),
+            title: "Select Color",
+            onSelect: (color) => {
                 if (!inputUserId) {
                     toasts.showToast("Please enter a valid User ID");
                     return;
                 }
-
-                util.openSheet(CustomColorPickerActionSheet, {
-                    color: util.colorConverter.toInt("#000000"),
-                    title: "Select Color",
-                    onSelect: (color) => {
-                        const hexColor = util.colorConverter.toHex(color);
-                        const entries = storage.colors?.entries || [];
-                        entries.push({ userId: inputUserId, color: hexColor });
-                        storage.colors = { entries };
-                        toasts.showToast("Color entry added!");
-                    }
-                });
-            }
+                const hexColor = util.colorConverter.toHex(color);
+                const entries = storage.colors?.entries || [];
+                entries.push({ userId: inputUserId, color: hexColor });
+                storage.colors = { entries };
+                setInputUserId(""); // Reset the input
+                toasts.showToast("Color entry added!");
+            },
+            header: (
+                <View style={{ padding: 16, paddingBottom: 0 }}>
+                    <FormInput
+                        title="Discord User ID"
+                        placeholder="Enter the user's Discord ID"
+                        value={inputUserId}
+                        onChange={(value) => setInputUserId(value)}
+                    />
+                </View>
+            )
         });
     };
 
@@ -71,6 +100,7 @@ export function Settings() {
                                 }
                             });
                         }}
+                        onLongPress={() => handleLongPress(entry, index)}
                         trailing={
                             <View style={{
                                 width: 24,
