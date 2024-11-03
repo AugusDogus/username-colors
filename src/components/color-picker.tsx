@@ -1,137 +1,113 @@
-import {
-    StyleSheet,
-    View,
-} from "react-native";
-import { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import ColorPicker, { BrightnessSlider, InputWidget, OpacitySlider, Panel2, colorKit, type returnedResults } from 'reanimated-color-picker';
+import { findByName, findByProps } from '@vendetta/metro';
+import { constants, React, stylesheet } from "@vendetta/metro/common";
+import { storage } from "@vendetta/plugin";
+import { semanticColors } from "@vendetta/ui";
+import { Forms, General } from "@vendetta/ui/components";
+import * as util from './util';
+const { ScrollView, View, Text, TouchableOpacity, TextInput, Pressable, Image } = General;
+const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, FormSection, FormDivider, FormInput, FormSliderRow } = Forms;
+const HelpMessage = findByName("HelpMessage");
+const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
+const dialog = findByProps("show", "confirm", "close");
 
-export function DiscordColorPicker() {
+const customizeableColors = [
+    {
+        id: "textColor",
+        label: "Deleted Message Text Color",
+        subLabel: "Click to customize Deleted Message Text Color",
+        defaultColor: "#E40303",
+    }
+]
 
-    const initialColor = colorKit.randomRgbColor().hex();
+export function ColorPicker() {
+    return (<>
+        {
+            storage?.switches?.customizeable && (<>
+                <View style={[styles.subText]}>{
+                    customizeableColors?.map((obj) => {
+                        const whenPressed = () => util?.openSheet(
+                            CustomColorPickerActionSheet, {
+                            color: util?.colorConverter?.toInt(storage.colors[obj.id] || obj?.defaultColor || "#000"),
+                            onSelect: (color) => {
+                                const value = util?.colorConverter?.toHex(color)
+                                // console.log(color, value)
+                                storage.colors[obj.id] = value
+                            }
+                        }
+                        );
 
-    const selectedColor = useSharedValue(initialColor);
-    const backgroundColorStyle = useAnimatedStyle(() => ({ backgroundColor: selectedColor.value }));
-
-    const onColorSelect = (color: returnedResults) => {
-        'worklet';
-        selectedColor.value = color.hex;
-    };
-
-
-    return (
-        <ColorPicker
-            value={selectedColor.value}
-            sliderThickness={25}
-            thumbSize={30}
-            thumbShape='rect'
-            onChange={onColorSelect}
-        >
-            <Panel2 style={styles.panelStyle} thumbShape='ring' reverseVerticalChannel />
-
-            <BrightnessSlider style={styles.sliderStyle} />
-
-            <OpacitySlider style={styles.sliderStyle} />
-
-            <View style={styles.previewTxtContainer}>
-                <InputWidget
-                    inputStyle={{ color: '#fff', paddingVertical: 2, borderColor: '#707070', fontSize: 12, marginLeft: 5 }}
-                    iconColor='#707070'
-                />
-            </View>
-        </ColorPicker>
-    )
-
+                        return (<>
+                            <FormRow
+                                label={obj?.label}
+                                subLabel={obj?.subLabel || "Click to Update"}
+                                onPress={whenPressed}
+                                trailing={
+                                    <TouchableOpacity onPress={whenPressed}>
+                                        <Image
+                                            source={{ uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mJsrQAAAgwBAJ9P6qYAAAAASUVORK5CYII=' }}
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 10,
+                                                backgroundColor: storage?.colors[obj.id] || customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
+                                            }}
+                                        />
+                                    </TouchableOpacity>
+                                }
+                            />
+                        </>)
+                    })
+                }
+                </View>
+            </>)
+        }
+    </>)
 }
 
-const styles = StyleSheet.create({
+const styles = stylesheet.createThemedStyleSheet({
+    text: {
+        color: semanticColors.HEADER_SECONDARY,
+        paddingLeft: "5.5%",
+        paddingRight: 10,
+        marginBottom: 10,
+        letterSpacing: 0.25,
+        fontFamily: constants.Fonts.PRIMARY_BOLD,
+        fontSize: 16
+    },
+    subText: {
+        color: semanticColors.TEXT_POSITIVE,
+        paddingLeft: "6%",
+        paddingRight: 10,
+        marginBottom: 10,
+        letterSpacing: 0.25,
+        fontFamily: constants.Fonts.DISPLAY_NORMAL,
+        fontSize: 12
+    },
+    input: {
+        fontSize: 16,
+        fontFamily: constants.Fonts.PRIMARY_MEDIUM,
+        color: semanticColors.TEXT_NORMAL
+    },
+    placeholder: {
+        color: semanticColors.INPUT_PLACEHOLDER_TEXT
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignContent: 'center',
+        alignItems: 'center',
     },
-    pickerContainer: {
-        alignSelf: 'center',
-        width: 300,
-        backgroundColor: '#202124',
-        padding: 20,
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 5,
-        },
-        shadowOpacity: 0.34,
-        shadowRadius: 6.27,
-
-        elevation: 10,
+    colorPreview: {
+        width: "75%",
+        height: 100,
+        marginBottom: 20,
     },
-    panelStyle: {
-        borderRadius: 16,
-
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
+    row: {
+        flexDirection: "row",
+        height: 80,
+        width: "90%",
+        marginBottom: 20
     },
-    sliderStyle: {
-        borderRadius: 20,
-        marginTop: 20,
-
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
-    },
-    previewTxtContainer: {
-        paddingTop: 20,
-        marginTop: 20,
-        borderTopWidth: 1,
-        borderColor: '#bebdbe',
-    },
-    openButton: {
-        width: '100%',
-        borderRadius: 20,
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-        backgroundColor: '#fff',
-
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
-    },
-    closeButton: {
-        position: 'absolute',
-        bottom: 10,
-        borderRadius: 20,
-        paddingHorizontal: 40,
-        paddingVertical: 10,
-        alignSelf: 'center',
-        backgroundColor: '#fff',
-
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-
-        elevation: 5,
-    },
+    border: {
+        borderRadius: 12
+    }
 });

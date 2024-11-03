@@ -1,6 +1,6 @@
 import { Forms, General, Search } from "@vendetta/ui/components";
+import { ColorPicker } from './components/color-picker';
 import { TextInput } from './components/text-input';
-import { DiscordColorPicker } from './components/color-picker';
 const { FormText, FormSection } = Forms;
 const { Button } = General;
 
@@ -12,7 +12,7 @@ export function Settings() {
                     Hello, world!
                 </FormText>
                 <TextInput />
-                <DiscordColorPicker />
+                <ColorPicker />
                 <Search />
             </FormSection >
         </>
