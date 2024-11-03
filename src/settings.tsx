@@ -7,122 +7,54 @@ import { Forms, General } from "@vendetta/ui/components";
 import { showSimpleActionSheet } from './components/action-sheet';
 import { EditUserIdModal } from './components/edit-user-modal';
 import * as util from './components/util';
+import { UserIdInputModal } from './components/UserIdInputModal';
 const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");
+const { openAlert, dismissAlert } = findByProps("openAlert", "dismissAlert");
 
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 
-const AddEntryModal = ({ colorEntries, inputUserId, setInputUserId }) => {
-    return (
-        <View style={{ padding: 16 }}>
-            <FormInput
-                title="Discord User ID"
-                placeholder="Enter the user's Discord ID"
-                value={inputUserId}
-                onChange={(value) => setInputUserId(value)}
-                style={{ marginBottom: 16 }}
+export function Settings() {
+    const colorEntries = storage.colors?.entries || [];
+
+    const handleLongPress = (entry, index) => {
+        openAlert({
+            key: "edit-userid-modal",
+            content: <UserIdInputModal
+                title="Edit User ID"
+                initialValue={entry.userId}
+                onConfirm={(newId) => {
+                    const updatedEntries = [...colorEntries];
+                    updatedEntries[index] = { ...entry, userId: newId };
+                    storage.colors = { entries: updatedEntries };
+                    toasts.showToast("User ID updated!");
+                    dismissAlert("edit-userid-modal");
+                }}
             />
-            <Button
-                title="Next"
-                onPress={() => {
-                    if (!inputUserId) {
-                        toasts.showToast("Please enter a valid User ID");
-                        return;
-                    }
-                    popModal("add-entry-modal");
+        });
+    };
+
+    const addNewEntry = () => {
+        openAlert({
+            key: "add-userid-modal",
+            content: <UserIdInputModal
+                title="Add New User ID"
+                onConfirm={(userId) => {
+                    dismissAlert("add-userid-modal");
                     util.openSheet(CustomColorPickerActionSheet, {
                         color: util.colorConverter.toInt("#000000"),
                         title: "Select Color",
                         onSelect: (color) => {
                             const hexColor = util.colorConverter.toHex(color);
                             const entries = colorEntries || [];
-                            entries.push({ userId: inputUserId, color: hexColor });
+                            entries.push({ userId, color: hexColor });
                             storage.colors = { entries };
-                            setInputUserId(""); // Reset the input
                             toasts.showToast("Color entry added!");
                         }
                     });
                 }}
             />
-        </View>
-    );
-};
-
-export function Settings() {
-    const colorEntries = storage.colors?.entries || [];
-    const [inputUserId, setInputUserId] = React.useState("");
-
-    const handleLongPress = (entry, index) => {
-        showSimpleActionSheet({
-            key: "CardOverflow",
-            header: {
-                title: `User ID: ${entry.userId}`
-            },
-            options: [
-                {
-                    label: "Modify User ID",
-                    onPress: () => {
-                        pushModal("edit-userid-modal", {
-                            render: () => (
-                                <EditUserIdModal
-                                    entry={entry}
-                                    index={index}
-                                    colorEntries={colorEntries}
-                                />
-                            )
-                        });
-                    }
-                },
-                {
-                    label: "Modify Color",
-                    onPress: () => {
-                        util.openSheet(CustomColorPickerActionSheet, {
-                            color: util.colorConverter.toInt(entry.color),
-                            title: "Select Color",
-                            onSelect: (color) => {
-                                const hexColor = util.colorConverter.toHex(color);
-                                const updatedEntries = [...colorEntries];
-                                updatedEntries[index] = { ...entry, color: hexColor };
-                                storage.colors = { entries: updatedEntries };
-                                toasts.showToast("Color updated!");
-                            }
-                        });
-                    }
-                },
-                {
-                    label: "Delete",
-                    isDestructive: true,
-                    onPress: () => {
-                        const updatedEntries = colorEntries.filter((_, i) => i !== index);
-                        storage.colors = { entries: updatedEntries };
-                        toasts.showToast("Color entry removed!");
-                    }
-                },
-                { label: "Cancel" }
-            ]
-        });
-    };
-
-    const addNewEntry = () => {
-        pushModal({
-            key: "add-entry-modal",
-            modal: {
-                key: "add-entry-modal",
-                modal: () => (
-                    <AddEntryModal
-                        colorEntries={colorEntries}
-                        inputUserId={inputUserId}
-                        setInputUserId={setInputUserId}
-                    />
-                ),
-                animation: "slide-up",
-                shouldPersistUnderModals: false,
-                props: {
-                    title: "Add New Entry"
-                },
-                closable: true
-            }
         });
     };
 
