@@ -1,7 +1,6 @@
 import { findByName, findByProps } from '@vendetta/metro';
 import { constants, React, stylesheet } from "@vendetta/metro/common";
-import { storage } from "@vendetta/plugin";
-import { semanticColors } from "@vendetta/ui";
+import { semanticColors, toasts } from "@vendetta/ui";
 import { Forms, General } from "@vendetta/ui/components";
 import * as util from './util';
 const { ScrollView, View, Text, TouchableOpacity, TextInput, Pressable, Image } = General;
@@ -25,11 +24,12 @@ export function ColorPicker() {
             customizeableColors?.map((obj) => {
                 const whenPressed = () => util?.openSheet(
                     CustomColorPickerActionSheet, {
-                    color: util?.colorConverter?.toInt(storage.colors[obj.id] || obj?.defaultColor || "#000"),
+                    color: util?.colorConverter?.toInt(obj?.defaultColor || "#000"),
                     onSelect: (color) => {
                         const value = util?.colorConverter?.toHex(color)
-                        // console.log(color, value)
-                        storage.colors[obj.id] = value
+                        console.log(color, value)
+                        toasts.showToast(`Color Updated ${color} | ${value}`)
+                        // storage.colors[obj.id] = value
                     }
                 }
                 );
@@ -47,7 +47,7 @@ export function ColorPicker() {
                                         width: 32,
                                         height: 32,
                                         borderRadius: 10,
-                                        backgroundColor: storage?.colors[obj.id] || customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
+                                        backgroundColor: customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
                                     }}
                                 />
                             </TouchableOpacity>
