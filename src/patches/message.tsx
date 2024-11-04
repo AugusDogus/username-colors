@@ -1,45 +1,31 @@
 import { logger } from "@vendetta";
-import { findByName } from "@vendetta/metro";
+import { findByDisplayName, findByName } from "@vendetta/metro";
 import { before } from "@vendetta/patcher";
 
 export let messagesPatch: (() => void) | undefined;
 
 export function patchMessages() {
     try {
-        const MessagesItemChannelContent = findByName("MessagesItemChannelContent");
+        const Text = findByName("Text") || findByDisplayName("Text");
 
-        if (!MessagesItemChannelContent) {
-            logger.log("Could not find MessagesItemChannelContent component");
+        if (!Text) {
+            logger.log("Could not find Text component");
             return;
         }
 
-        if (!MessagesItemChannelContent.default) {
-            logger.log("MessagesItemChannelContent found but has no default export:", MessagesItemChannelContent);
-            return;
-        }
-
-        messagesPatch = before("default", MessagesItemChannelContent, (props) => {
+        messagesPatch = before("default", Text, (props) => {
             try {
-                logger.log("MessagesItemChannelContent props:", props[0]);
-
-                const firstProps = props[0];
-                if (firstProps?.children) {
-                    const children = Array.isArray(firstProps.children)
-                        ? firstProps.children
-                        : [firstProps.children];
-
-                    children.forEach((child, index) => {
-                        logger.log(`Child ${index} type:`,
-                            child?.type?.name || child?.type || "unknown type"
-                        );
-                    });
+                // Log all text content to help us identify username texts
+                if (props[0]?.children) {
+                    logger.log("Text content:", props[0].children);
+                    logger.log("Text props:", props[0]);
                 }
             } catch (err) {
                 logger.log("Error in patch callback:", err);
             }
         });
 
-        logger.log("Successfully patched MessagesItemChannelContent");
+        logger.log("Successfully patched Text component");
     } catch (err) {
         logger.log("Error while setting up patch:", err);
     }
