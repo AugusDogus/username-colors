@@ -1,8 +1,8 @@
 import { findByName, findByProps } from '@vendetta/metro';
-import { React, stylesheet } from '@vendetta/metro/common';
+import { clipboard, React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
-import { showInputAlert } from '@vendetta/ui/alerts';
+import { showCustomAlert } from '@vendetta/ui/alerts';
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
 import { UserIDInputAlert } from './components/user-id-input-alert';
@@ -11,6 +11,27 @@ const { FormText, FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const { pushModal, popModal } = findByProps("pushModal", "popModal");
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
+
+const UserIDAlert = ({ onConfirm }) => {
+    const [value, setValue] = React.useState("");
+    return (
+        <View>
+            <FormInput
+                value={value}
+                onChange={setValue}
+                placeholder="Type here..."
+            />
+            <Button
+                size="sm"
+                variant="tertiary"
+                text="Import from clipboard"
+                icon={getAssetIDByName("ic_clipboard")}
+                onPress={() => clipboard.getString().then((str: string) => setValue(str))}
+                style={{ marginTop: 8 }}
+            />
+        </View>
+    );
+};
 
 export function Settings() {
     const [entries, setEntries] = React.useState(storage.colors?.entries || []);
@@ -30,18 +51,17 @@ export function Settings() {
     };
 
     const addNewEntry = () => {
-        showInputAlert({
-            title: 'Enter User ID',
-            confirmText: 'Save',
+        showCustomAlert(UserIDAlert, {
+            title: "Enter User ID",
+            confirmText: "Save",
             cancelText: "Cancel",
-            placeholder: "Type here...",
-            onConfirm: (userId) => {
+            onConfirm: (value) => {
                 util.openSheet(CustomColorPickerActionSheet, {
                     color: util.colorConverter.toInt("#000000"),
                     title: "Select Color",
                     onSelect: (color) => {
                         const hexColor = util.colorConverter.toHex(color);
-                        const newEntries = [...entries, { userId, color: hexColor }];
+                        const newEntries = [...entries, { userId: value, color: hexColor }];
                         storage.colors = { entries: newEntries };
                         setEntries(newEntries);
                         toasts.showToast("Color entry added!");
