@@ -24,7 +24,7 @@ const UserIDAlert = ({ onConfirm }) => {
             <Button
                 size="sm"
                 variant="tertiary"
-                text="Import from clipboard"
+                title="Import from clipboard"
                 icon={getAssetIDByName("ic_clipboard")}
                 onPress={() => clipboard.getString().then((str: string) => setValue(str))}
                 style={{ marginTop: 8 }}
