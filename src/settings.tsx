@@ -5,8 +5,9 @@ import { semanticColors, toasts } from "@vendetta/ui";
 import { showInputAlert } from '@vendetta/ui/alerts';
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
-import LongPressActionSheet from './components/LongPressActionSheet';
-import * as util from './util';
+import { openSheet } from './components/action-sheet';
+import { LongPressActionSheet } from './components/long-press-action-sheet';
+import * as util from './utils';
 const { FormRow } = Forms;
 const { View, TouchableOpacity, Image } = General;
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
@@ -14,10 +15,11 @@ const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
 export function Settings() {
     const [entries, setEntries] = React.useState(storage.colors?.entries || []);
     const handleLongPress = (entry, index) => {
-        util.openSheet(LongPressActionSheet, {
-            kaboom: () => {
-                console.log("kaboom");
-            }
+        openSheet(LongPressActionSheet, {
+            entry,
+            index,
+            entries,
+            setEntries
         });
     };
 
@@ -28,7 +30,7 @@ export function Settings() {
             cancelText: "Cancel",
             placeholder: "Type here...",
             onConfirm: (userId) => {
-                util.openSheet(CustomColorPickerActionSheet, {
+                openSheet(CustomColorPickerActionSheet, {
                     color: util.colorConverter.toInt("#000000"),
                     title: "Select Color",
                     onSelect: (color) => {
@@ -51,7 +53,7 @@ export function Settings() {
                     label={`User ID: ${entry.userId}`}
                     subLabel="Tap to change color"
                     onPress={() => {
-                        util.openSheet(CustomColorPickerActionSheet, {
+                        openSheet(CustomColorPickerActionSheet, {
                             color: util.colorConverter.toInt(entry.color),
                             title: "Select Color",
                             onSelect: (color) => {

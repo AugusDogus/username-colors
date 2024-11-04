@@ -1,5 +1,7 @@
+import { logger } from '@vendetta';
 import { find, findByProps } from "@vendetta/metro";
 import { ReactNative as RN } from "@vendetta/metro/common";
+import { showToast } from '@vendetta/ui/toasts';
 import { type ImageSourcePropType } from "react-native";
 
 const _ActionSheet =
@@ -16,6 +18,19 @@ export const LazyActionSheet = findByProps("openLazy", "hideActionSheet") as {
     hideActionSheet: () => void;
 };
 export const { openLazy, hideActionSheet } = LazyActionSheet;
+
+export function openSheet(sheet, props) {
+    try {
+        openLazy(
+            new Promise((call) => call({ default: sheet })),
+            'ActionSheet',
+            props
+        );
+    } catch (e) {
+        logger.error(e.stack);
+        showToast('Got error when opening ActionSheet! Please check debug logs');
+    }
+}
 
 export const { showSimpleActionSheet } = findByProps(
     "showSimpleActionSheet",
