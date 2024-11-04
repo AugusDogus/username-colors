@@ -1,65 +1,88 @@
 import { findByName } from '@vendetta/metro';
-import { clipboard, React, stylesheet } from '@vendetta/metro/common';
+import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
+import { showInputAlert } from '@vendetta/ui/alerts';
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
-import { UserIDInputAlert } from './components/user-id-input-alert';
 import * as util from './util';
 const { FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
-
-const UserIDAlert = ({ onConfirm }) => {
-    const [value, setValue] = React.useState("");
-    return (
-        <View>
-            <FormInput
-                value={value}
-                onChange={setValue}
-                placeholder="Type here..."
-            />
-            <Button
-                size="sm"
-                variant="tertiary"
-                title="Import from clipboard"
-                icon={getAssetIDByName("ic_clipboard")}
-                onPress={() => clipboard.getString().then((str: string) => setValue(str))}
-                style={{ marginTop: 8 }}
-            />
-        </View>
-    );
-};
+const ActionSheet = findByName("ActionSheet");
 
 export function Settings() {
     const [entries, setEntries] = React.useState(storage.colors?.entries || []);
-
     const handleLongPress = (entry, index) => {
-        util.openSheet(UserIDInputAlert, {
-            title: "Edit User ID",
-            initialValue: entry.userId,
-            onConfirm: (newId) => {
-                const updatedEntries = [...entries];
-                updatedEntries[index] = { ...entry, userId: newId };
-                storage.colors = { entries: updatedEntries };
-                setEntries(updatedEntries);
-                toasts.showToast("User ID updated!");
-            }
+        util.openSheet(ActionSheet, {
+            header: `User ID: ${entry.userId}`,
+            options: [
+                {
+                    label: "Modify User ID",
+                    onPress: () => {
+                        showInputAlert({
+                            title: "Edit User ID",
+                            placeholder: "Enter new User ID",
+                            initialValue: entry.userId,
+                            confirmText: "Save",
+                            onConfirm: (newId) => {
+                                const updatedEntries = [...entries];
+                                updatedEntries[index] = { ...entry, userId: newId };
+                                storage.colors = { entries: updatedEntries };
+                                setEntries(updatedEntries);
+                                toasts.showToast("User ID updated!");
+                            }
+                        });
+                    }
+                },
+                {
+                    label: "Change Color",
+                    onPress: () => {
+                        util.openSheet(CustomColorPickerActionSheet, {
+                            color: util.colorConverter.toInt(entry.color),
+                            title: "Select Color",
+                            onSelect: (color) => {
+                                const hexColor = util.colorConverter.toHex(color);
+                                const updatedEntries = [...entries];
+                                updatedEntries[index] = { ...entry, color: hexColor };
+                                storage.colors = { entries: updatedEntries };
+                                setEntries(updatedEntries);
+                                toasts.showToast("Color updated!");
+                            }
+                        });
+                    }
+                },
+                {
+                    label: "Delete Entry",
+                    isDestructive: true,
+                    onPress: () => {
+                        const updatedEntries = entries.filter((_, i) => i !== index);
+                        storage.colors = { entries: updatedEntries };
+                        setEntries(updatedEntries);
+                        toasts.showToast("Entry deleted!");
+                    }
+                },
+                {
+                    label: "Cancel",
+                    isCancel: true
+                }
+            ]
         });
     };
 
     const addNewEntry = () => {
-        util.openSheet(UserIDInputAlert, {
-            title: "Enter User ID",
-            confirmText: "Save",
+        showInputAlert({
+            title: 'Enter User ID',
+            confirmText: 'Save',
             cancelText: "Cancel",
-            onConfirm: (value) => {
+            placeholder: "Type here...",
+            onConfirm: (userId) => {
                 util.openSheet(CustomColorPickerActionSheet, {
                     color: util.colorConverter.toInt("#000000"),
                     title: "Select Color",
                     onSelect: (color) => {
                         const hexColor = util.colorConverter.toHex(color);
-                        const newEntries = [...entries, { userId: value, color: hexColor }];
+                        const newEntries = [...entries, { userId, color: hexColor }];
                         storage.colors = { entries: newEntries };
                         setEntries(newEntries);
                         toasts.showToast("Color entry added!");
