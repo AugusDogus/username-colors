@@ -1,74 +1,23 @@
-import { find, findByName, findByProps } from '@vendetta/metro';
+import { findByName } from '@vendetta/metro';
 import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
 import { showInputAlert } from '@vendetta/ui/alerts';
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { Forms, General } from "@vendetta/ui/components";
+import LongPressActionSheet from './components/LongPressActionSheet';
 import * as util from './util';
-const { FormInput, FormRow } = Forms;
-const { Button, View, TouchableOpacity, Image } = General;
+const { FormRow } = Forms;
+const { View, TouchableOpacity, Image } = General;
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
-const ActionSheet =
-    findByProps("ActionSheet")?.ActionSheet ??
-    find((x) => x.render?.name === "ActionSheet");
 
 export function Settings() {
     const [entries, setEntries] = React.useState(storage.colors?.entries || []);
     const handleLongPress = (entry, index) => {
-        util.openSheet(ActionSheet, {
-            header: `User ID: ${entry.userId}`,
-            options: [
-                {
-                    label: "Modify User ID",
-                    onPress: () => {
-                        showInputAlert({
-                            title: "Edit User ID",
-                            placeholder: "Enter new User ID",
-                            initialValue: entry.userId,
-                            confirmText: "Save",
-                            onConfirm: (newId) => {
-                                const updatedEntries = [...entries];
-                                updatedEntries[index] = { ...entry, userId: newId };
-                                storage.colors = { entries: updatedEntries };
-                                setEntries(updatedEntries);
-                                toasts.showToast("User ID updated!");
-                            }
-                        });
-                    }
-                },
-                {
-                    label: "Change Color",
-                    onPress: () => {
-                        util.openSheet(CustomColorPickerActionSheet, {
-                            color: util.colorConverter.toInt(entry.color),
-                            title: "Select Color",
-                            onSelect: (color) => {
-                                const hexColor = util.colorConverter.toHex(color);
-                                const updatedEntries = [...entries];
-                                updatedEntries[index] = { ...entry, color: hexColor };
-                                storage.colors = { entries: updatedEntries };
-                                setEntries(updatedEntries);
-                                toasts.showToast("Color updated!");
-                            }
-                        });
-                    }
-                },
-                {
-                    label: "Delete Entry",
-                    isDestructive: true,
-                    onPress: () => {
-                        const updatedEntries = entries.filter((_, i) => i !== index);
-                        storage.colors = { entries: updatedEntries };
-                        setEntries(updatedEntries);
-                        toasts.showToast("Entry deleted!");
-                    }
-                },
-                {
-                    label: "Cancel",
-                    isCancel: true
-                }
-            ]
+        util.openSheet(LongPressActionSheet, {
+            kaboom: () => {
+                console.log("kaboom");
+            }
         });
     };
 
