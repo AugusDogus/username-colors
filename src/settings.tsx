@@ -1,4 +1,4 @@
-import { findByName } from '@vendetta/metro';
+import { find, findByName, findByProps } from '@vendetta/metro';
 import { React, stylesheet } from '@vendetta/metro/common';
 import { storage } from '@vendetta/plugin';
 import { semanticColors, toasts } from "@vendetta/ui";
@@ -9,7 +9,9 @@ import * as util from './util';
 const { FormInput, FormRow } = Forms;
 const { Button, View, TouchableOpacity, Image } = General;
 const CustomColorPickerActionSheet = findByName("CustomColorPickerActionSheet");
-const ActionSheet = findByName("ActionSheet");
+const ActionSheet =
+    findByProps("ActionSheet")?.ActionSheet ??
+    find((x) => x.render?.name === "ActionSheet");
 
 export function Settings() {
     const [entries, setEntries] = React.useState(storage.colors?.entries || []);
